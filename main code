@@ -1,0 +1,93 @@
+# necessary libraries
+
+from gensim.models import Word2Vec
+from sklearn.decomposition import PCA
+import gensim
+import numpy as np
+import pandas as pd
+
+import matplotlib.pyplot as plt 
+from mpl_toolkits.mplot3d import axes3d
+import matplotlib.pyplot as plt
+from numpy.random import rand
+from IPython.display import HTML
+from matplotlib import animation
+from mpl_toolkits.mplot3d.art3d import Line3DCollection
+from mpl_toolkits.mplot3d.proj3d import proj_transform
+import matplotlib.animation as manimation
+from matplotlib.patches import FancyArrowPatch
+from mpl_toolkits.mplot3d import proj3d
+from gensim.models import KeyedVectors
+manimation.writers.list()
+
+# Download the pretrained model from the link in the read me section: 
+# unzip it and copy its path in the file name below
+
+filename = 'D:\GoogleNews-vectors-negative300.bin' 
+model = KeyedVectors.load_word2vec_format(filename, binary=True)
+
+# Check the similarity of words or play with analogies
+most_similar = model.most_similar(positive=['man', 'girl'], negative=['boy'], topn=1)
+print(most similar)
+# output : "woman"
+
+emb = [model[v] for v in model.vocab]
+words = list(model.wv.vocab)
+
+# using PCA for compression
+pca = PCA(n_components = 3)
+results = pca.fit_transform(emb)
+
+# making the blue arrow
+class Arrow3D(FancyArrowPatch):
+
+    def __init__(self, xs, ys, zs, *args, **kwargs):
+        FancyArrowPatch.__init__(self, (0, 0), (0, 0), *args, **kwargs)
+        self._verts3d = xs, ys, zs
+
+    def draw(self, renderer):
+        xs3d, ys3d, zs3d = self._verts3d
+        xs, ys, zs = proj3d.proj_transform(xs3d, ys3d, zs3d, renderer.M)
+        self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
+        FancyArrowPatch.draw(self, renderer)
+        
+ind = []
+# write the names that you want to display in the list bellow
+vector_names = ['girl', 'woman', 'man']
+for i, word in enumerate(words):
+    if word in vector_names:
+        ind.append(i)
+        
+
+
+
+fig = plt.figure(dpi=100)
+ax = fig.gca(projection='3d')
+
+for i in ind:
+   # x, y, z  = results[i, 0], results[i, 1], results[i, 2]
+    ax.text(results[i, 0], results[i, 1],
+            results[i, 2], '%s'%(str(words[i])),
+            size = 13, zorder=1)
+        
+    a = Arrow3D([0, results[i, 0]], [0, results[i, 1]],
+                [0, results[i, 2]], mutation_scale=20,
+                lw=1, arrowstyle="-|>", color="b")
+    ax.add_artist(a)
+
+
+edges2 = pairs
+x, y, z  = results[:, 0], results[:, 1], results[:, 2]
+
+def animate(frame):
+    ax.view_init(10, frame/3)
+    #plt.pause(.001)
+    ax.set_xlim(min(np.append(x[ind], 0)), max(np.append(x[ind], 0)))
+    ax.set_ylim(min(np.append(y[ind], 0)), max(np.append(y[ind], 0)))
+    ax.set_zlim(min(np.append(z[ind], 0)), max(np.append(z[ind], 0)))
+    return fig
+
+plt.plot([0],[0],[0], 'ro')
+
+anim = animation.FuncAnimation(fig, animate, frames=200, interval=50)
+HTML(anim.to_html5_video())
