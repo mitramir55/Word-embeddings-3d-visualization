@@ -10,3 +10,4 @@ Sample 1:
 
 ![vis_1](https://github.com/mitramir55/Word-embeddings-3d-visualization/blob/main/download.gif)
  Sample 2:
+![alt-text](https://github.com/mitramir55/Word-embeddings-3d-visualization/blob/main/Gif_2.gif)
