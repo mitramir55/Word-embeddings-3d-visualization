@@ -5,3 +5,8 @@ The code produces a visual 3 dimensional transformed word embedding for better a
 
 Just keep in mind that you have to have ffmg on your computer for generating a graph. If you don't, just run the command below in the in anaconda environment:
 conda install -c conda-forge ffmpeg
+
+Sample 1:
+
+![vis_1](https://github.com/mitramir55/Word-embeddings-3d-visualization/blob/main/download.gif)
+ Sample 2:
